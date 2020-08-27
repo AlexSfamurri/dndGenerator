@@ -301,5 +301,51 @@ describe('cartographer',()=>{
         walker.startWalking('n');
         expect(walker.getFrontFacingTile().getTileInfo().type).to.equal(testMap[5][5].getNeighbors().n.getTileInfo().type);
         expect(walker.getFrontFacingTile().getTileInfo().type).to.not.equal(testMap[5][5].getTileInfo().type);
+    });
+    it('should be able to be dropped on anchors and figure out which direction it needs to walk',()=>{
+        const testMap = mapGen.getMap();
+        const mapCompiler = new MapCompiler(testMap);
+        const door = new DoorVTwo;
+        const startingRoom = new StartingRoom();
+        const walker = new Cartographer();
+        const listOfOrientations = [];
+        mapCompiler.traverseTilesInADirection(5, 5, 's', 'e', startingRoom.getWidth(), startingRoom.getLength(), (tile)=>{
+            startingRoom.buildRoom(tile);
+        });
+        const cardnialExits = startingRoom.getExitLocations();
+        const exitTypes = startingRoom.getExitTypes();
+        const mapCompilerSearchresults = [];
+        for(let i = 0; i < cardnialExits.length; i++){
+            mapCompilerSearchresults.push(mapCompiler.findEdgeTilesByType(cardnialExits[i], 'starting room'));
+        };
+        for(let i = 0; i < mapCompilerSearchresults.length; i++){
+            const resultsLength = mapCompilerSearchresults[i].length;
+            if(resultsLength > 1){
+                mapCompilerSearchresults[i][dice.roll(`1d${resultsLength}`).result - 1].updateType(exitTypes[i]);
+            } else{
+                mapCompilerSearchresults[i][0].updateType(exitTypes[i]);
+            }
+        };
+        const doorAnchors = mapCompiler.getAnchorPointsForBuild('door');
+        for(let i = 0; i < doorAnchors.length; i ++){
+            door.tellTileWhatKindOfDoor(doorAnchors[i]);
+            door.deployAnchor(doorAnchors[i], 'starting room');
+            walker.placeCartographer(doorAnchors[i]);
+            if(doorAnchors[i].getNeighbors().n.getTileInfo().type === 'starting room'){
+                walker.startWalking('s');
+                listOfOrientations.push(walker.getOrientation());
+            }else if(doorAnchors[i].getNeighbors().s.getTileInfo().type === 'starting room'){
+                walker.startWalking('n');
+                listOfOrientations.push(walker.getOrientation());
+            }else if(doorAnchors[i].getNeighbors().e.getTileInfo().type === 'starting room'){
+                walker.startWalking('w');
+                listOfOrientations.push(walker.getOrientation());
+            }else if(doorAnchors[i].getNeighbors().w.getTileInfo().type === 'starting room'){
+                walker.startWalking('e');
+                listOfOrientations.push(walker.getOrientation());
+            }else{
+                console.log('Walker is lost at these x and y coords: ', doorAnchors[i].getTileInfo().x, ',', doorAnchors[i].getTileInfo().y);
+            }
+        };
     })
 })

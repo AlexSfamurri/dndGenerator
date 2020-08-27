@@ -2,7 +2,7 @@ class Cartographer{
     constructor(locationTile){
         this.location = locationTile;
         this.facingDirection = '';
-        this.frontFacingTile = locationTile.getNeighbors().n;
+        this.frontFacingTile = (locationTile) ? locationTile.getNeighbors().n : null;
         this.orientation = {
             opposite:'n',
             right:'e',
@@ -13,6 +13,7 @@ class Cartographer{
         this.getOrientation = this.getOrientation.bind(this);
         this.getFacingDirection = this.getFacingDirection.bind(this);
         this.getFrontFacingTile = this.getFrontFacingTile.bind(this);
+        this.placeCartographer = this.placeCartographer.bind(this);
         this.startWalking = this.startWalking.bind(this);
         this.turnAround = this.turnAround.bind(this);
     }
@@ -24,6 +25,9 @@ class Cartographer{
     }
     getFrontFacingTile(){
         return this.frontFacingTile;
+    }
+    placeCartographer(location){
+        this.location = location;
     }
     startWalking(direction){
         this.facingDirection = direction;
