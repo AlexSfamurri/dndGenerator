@@ -269,7 +269,7 @@ describe('cartographer',()=>{
         expect(walker.getOrientation().left).to.equal('e');
         expect(walker.getOrientation().right).to.equal('w');
     })
-    it('should be able t let us know what tile is infront of Walker the cartographer', ()=>{
+    it('should be able to let us know what tile is infront of Walker the cartographer', ()=>{
         const testMap = mapGen.getMap();
         const mapCompiler = new MapCompiler(testMap);
         const door = new DoorVTwo;
@@ -298,5 +298,8 @@ describe('cartographer',()=>{
             door.deployAnchor(doorAnchors[i], 'starting room');
         };
 
+        walker.startWalking('n');
+        expect(walker.getFrontFacingTile().getTileInfo().type).to.equal(testMap[5][5].getNeighbors().n.getTileInfo().type);
+        expect(walker.getFrontFacingTile().getTileInfo().type).to.not.equal(testMap[5][5].getTileInfo().type);
     })
 })

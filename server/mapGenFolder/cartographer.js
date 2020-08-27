@@ -11,8 +11,8 @@ class Cartographer{
         };
 
         this.getOrientation = this.getOrientation.bind(this);
-        this.getFacingDirection = this.getFacingDirection(this);
-        this.getFrontFacingTile = this.getFrontFacingTile(this);
+        this.getFacingDirection = this.getFacingDirection.bind(this);
+        this.getFrontFacingTile = this.getFrontFacingTile.bind(this);
         this.startWalking = this.startWalking.bind(this);
         this.turnAround = this.turnAround.bind(this);
     }
